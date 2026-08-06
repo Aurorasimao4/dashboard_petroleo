@@ -1,0 +1,77 @@
+{
+  "meta": {
+    "title": "Petróleo em Angola — Painel de Dados Públicos",
+    "updated": "2026-08-06",
+    "notes": "Todos os valores de produção mensal de 2025 vêm diretamente dos boletins oficiais da ANPG. Os restantes indicadores combinam múltiplas fontes públicas (EIA, FMI, BAD, OEC/UN Comtrade, imprensa especializada); onde as fontes divergem, isso está assinalado explicitamente nos dados e no painel."
+  },
+  "monthly2025": [
+    { "m": "Jan", "total": 32673375, "avg": 1053980 },
+    { "m": "Fev", "total": 29530823, "avg": 1054672 },
+    { "m": "Mar", "total": 32165328, "avg": 1037591 },
+    { "m": "Abr", "total": 30051122, "avg": 1001704 },
+    { "m": "Mai", "total": 31480001, "avg": 1015484 },
+    { "m": "Jun", "total": 30085813, "avg": 1002860 },
+    { "m": "Jul", "total": 30961452, "avg": 998757 },
+    { "m": "Ago", "total": 32074313, "avg": 1034655 },
+    { "m": "Set", "total": 31775907, "avg": 1059197 },
+    { "m": "Out", "total": 33057447, "avg": 1066369 },
+    { "m": "Nov", "total": 31819812, "avg": 1060660 },
+    { "m": "Dez", "total": 31863172, "avg": 1027844 }
+  ],
+  "historical": [
+    { "label": "2005", "value": 1400000, "note": "~1,4M bopd", "peak": false },
+    { "label": "2008", "value": 1900000, "note": "Pico histórico", "peak": true },
+    { "label": "2014", "value": 1800000, "note": "~1,8M bopd", "peak": false },
+    { "label": "2023", "value": 1150000, "note": "~1,15M bopd", "peak": false },
+    { "label": "2024", "value": 1130000, "note": "média jan–set", "peak": false },
+    { "label": "2025", "value": 1034481, "note": "média calculada", "peak": false }
+  ],
+  "blocks": [
+    { "label": "Bloco 17", "op": "TotalEnergies · \"Bloco de Ouro\"", "value": 290573, "muted": false },
+    { "label": "Bloco 15", "op": "ExxonMobil", "value": 167739, "muted": false },
+    { "label": "Bloco 0", "op": "Chevron / CABGOC", "value": 125394, "muted": false },
+    { "label": "Bloco 15/06", "op": "Azule Energy", "value": 121438, "muted": false },
+    { "label": "Bloco 32", "op": "TotalEnergies", "value": 116657, "muted": false },
+    { "label": "Outros blocos", "op": "restantes concessões", "value": 206043, "muted": true }
+  ],
+  "exports2023": [
+    { "label": "China", "value": 603000, "muted": false },
+    { "label": "Espanha", "value": 84000, "muted": false },
+    { "label": "Índia", "value": 79000, "muted": false },
+    { "label": "Países Baixos", "value": 76000, "muted": false },
+    { "label": "Outros destinos", "value": 258000, "muted": true }
+  ],
+  "exportsValue2024": [
+    { "flag": "🇨🇳", "label": "China", "valueLabel": "US$ 16,14 mil M" },
+    { "flag": "🇮🇳", "label": "Índia", "valueLabel": "US$ 3,43 mil M" },
+    { "flag": "🇪🇸", "label": "Espanha", "valueLabel": "US$ 2,13 mil M" },
+    { "flag": "🇺🇸", "label": "EUA", "valueLabel": "US$ 1,70 mil M" },
+    { "flag": "🇮🇩", "label": "Indonésia", "valueLabel": "US$ 1,66 mil M" }
+  ],
+  "operators": [
+    { "label": "TotalEnergies", "value": 40, "muted": false },
+    { "label": "Chevron", "value": 26, "muted": false },
+    { "label": "ExxonMobil", "value": 19, "muted": false },
+    { "label": "Azule Energy (BP + Eni)", "value": 13, "muted": false },
+    { "label": "Outros / Sonangol P&P", "value": 2, "muted": true }
+  ],
+  "refining": [
+    { "label": "Produção de crude (dez 2025)", "value": 1027844, "planned": false },
+    { "label": "Refino operacional (Luanda)", "value": 72000, "planned": false },
+    { "label": "Refino planeado (todos os projetos)", "value": 432000, "planned": true }
+  ],
+  "economyGroups": ["% exportações", "% receita fiscal", "% do PIB"],
+  "economySeries": [
+    { "name": "FMI", "color": "var(--s-blue)", "values": [94, 60, 25] },
+    { "name": "BAD", "color": "var(--s-aqua)", "values": [95, null, 28.9] },
+    { "name": "Governo de Angola", "color": "var(--s-orange)", "values": [null, 57.2, 13.9] }
+  ],
+  "timeline": [
+    { "date": "2007", "title": "Angola adere à OPEP", "body": "Angola torna-se membro da Organização dos Países Exportadores de Petróleo.", "type": "normal" },
+    { "date": "2008", "title": "Pico histórico de produção", "body": "Produção atinge cerca de 1,9 milhões de bopd — o valor mais alto de sempre.", "type": "peak" },
+    { "date": "2017", "title": "Reformas do setor petrolífero", "body": "Governo de João Lourenço lança reformas para atrair investimento e travar o declínio da produção.", "type": "normal" },
+    { "date": "dez 2023", "title": "Angola sai da OPEP", "body": "Saída após desacordo sobre a quota de produção de 1,11 milhões bopd atribuída para 2024.", "type": "normal" },
+    { "date": "nov 2024", "title": "Decreto de Produção Incremental", "body": "Corte do imposto petrolífero para 25% e alívio do teto de recuperação de custos, para travar o declínio.", "type": "normal" },
+    { "date": "2025", "title": "Recuperação acima de 1M bopd", "body": "Novos volumes do CLOV Fase 3 e do campo Begonia revertem a produção, depois de cair abaixo de 1 milhão de bopd em julho.", "type": "good" }
+  ]
+}

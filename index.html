@@ -1,0 +1,492 @@
+<!doctype html>
+<html lang="pt-PT">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Petróleo em Angola — Painel de Dados Públicos</title>
+<meta name="description" content="Painel educativo com dados públicos oficiais (ANPG, EIA, FMI, BAD) sobre produção, exportação e economia do petróleo angolano, para estudantes e jornalistas.">
+<style>
+  :root {
+    color-scheme: light;
+    --page: #f1f4f5;
+    --surface: #fcfcfb;
+    --surface-2: #ffffff;
+    --ink: #0b0e10;
+    --ink-2: #4a5458;
+    --ink-muted: #7c8589;
+    --grid: #e2e6e7;
+    --border: rgba(10, 15, 20, 0.10);
+    --border-strong: rgba(10, 15, 20, 0.16);
+    --accent: #a8690f;
+    --accent-ink: #8a5a0d;
+    --accent-soft: rgba(197, 138, 20, 0.14);
+    --accent-line: #c5860f;
+    --s-blue: #2a78d6;
+    --s-orange: #eb6834;
+    --s-aqua: #1baf7a;
+    --other: #9aa0a3;
+    --good: #0ca30c;
+    --critical: #d03b3b;
+    --shadow: 0 1px 2px rgba(10,15,20,.04), 0 8px 24px -12px rgba(10,15,20,.14);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:where(:not([data-theme="light"])) {
+      color-scheme: dark;
+      --page: #0a0d0e;
+      --surface: #15191b;
+      --surface-2: #1b2022;
+      --ink: #f5f7f7;
+      --ink-2: #b8c0c2;
+      --ink-muted: #83898c;
+      --grid: #262c2e;
+      --border: rgba(255, 255, 255, 0.10);
+      --border-strong: rgba(255, 255, 255, 0.18);
+      --accent: #e2a53c;
+      --accent-ink: #eab766;
+      --accent-soft: rgba(226, 165, 60, 0.16);
+      --accent-line: #e2a53c;
+      --s-blue: #3987e5;
+      --s-orange: #d95926;
+      --s-aqua: #199e70;
+      --other: #6c7376;
+      --good: #0ca30c;
+      --critical: #e66767;
+      --shadow: 0 1px 2px rgba(0,0,0,.3), 0 8px 24px -12px rgba(0,0,0,.5);
+    }
+  }
+  :root[data-theme="dark"] {
+    color-scheme: dark;
+    --page: #0a0d0e; --surface: #15191b; --surface-2: #1b2022;
+    --ink: #f5f7f7; --ink-2: #b8c0c2; --ink-muted: #83898c;
+    --grid: #262c2e; --border: rgba(255,255,255,.10); --border-strong: rgba(255,255,255,.18);
+    --accent: #e2a53c; --accent-ink: #eab766; --accent-soft: rgba(226,165,60,.16); --accent-line: #e2a53c;
+    --s-blue: #3987e5; --s-orange: #d95926; --s-aqua: #199e70; --other: #6c7376;
+    --good: #0ca30c; --critical: #e66767;
+    --shadow: 0 1px 2px rgba(0,0,0,.3), 0 8px 24px -12px rgba(0,0,0,.5);
+  }
+  :root[data-theme="light"] {
+    color-scheme: light;
+    --page: #f1f4f5; --surface: #fcfcfb; --surface-2: #ffffff;
+    --ink: #0b0e10; --ink-2: #4a5458; --ink-muted: #7c8589;
+    --grid: #e2e6e7; --border: rgba(10,15,20,.10); --border-strong: rgba(10,15,20,.16);
+    --accent: #a8690f; --accent-ink: #8a5a0d; --accent-soft: rgba(197,138,20,.14); --accent-line: #c5860f;
+  }
+
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    background: var(--page);
+    color: var(--ink);
+    font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+  }
+  .num { font-family: ui-monospace, "SF Mono", "Cascadia Code", Menlo, Consolas, monospace; font-variant-numeric: tabular-nums; }
+
+  a { color: var(--accent-ink); }
+  h1, h2, h3 { text-wrap: balance; margin: 0; }
+
+  .wrap { max-width: 1180px; margin: 0 auto; padding: 0 20px 80px; }
+
+  #load-error {
+    display: none; max-width: 1180px; margin: 20px auto 0; padding: 0 20px;
+  }
+  #load-error .box {
+    border: 1px solid var(--critical); background: rgba(208,59,59,0.08); color: var(--ink);
+    border-radius: 10px; padding: 14px 16px; font-size: 13.5px;
+  }
+  #load-error code { background: var(--surface); padding: 1px 6px; border-radius: 4px; border: 1px solid var(--border-strong); }
+
+  /* ---------- Header ---------- */
+  header.top {
+    border-bottom: 1px solid var(--border);
+    background: linear-gradient(180deg, var(--accent-soft), transparent 140%);
+  }
+  .top-inner { max-width: 1180px; margin: 0 auto; padding: 40px 20px 28px; }
+  .eyebrow {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-size: 11.5px; font-weight: 700; letter-spacing: 0.09em; text-transform: uppercase;
+    color: var(--accent-ink); margin-bottom: 14px;
+  }
+  .eyebrow::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: var(--accent-line); }
+  h1 {
+    font-size: clamp(28px, 4.2vw, 42px); font-weight: 800; letter-spacing: -0.02em;
+    max-width: 18ch;
+  }
+  .subtitle { margin-top: 12px; max-width: 62ch; color: var(--ink-2); font-size: 16px; }
+  .badges { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 20px; }
+  .badge {
+    font-size: 12px; padding: 5px 10px; border-radius: 999px; border: 1px solid var(--border-strong);
+    color: var(--ink-2); background: var(--surface); white-space: nowrap;
+  }
+  nav.jump {
+    display: flex; gap: 6px; flex-wrap: wrap; margin-top: 24px;
+    border-top: 1px solid var(--border); padding-top: 16px;
+  }
+  nav.jump a {
+    font-size: 13px; font-weight: 600; color: var(--ink-2); text-decoration: none;
+    padding: 6px 12px; border-radius: 8px; border: 1px solid transparent;
+  }
+  nav.jump a:hover { background: var(--surface); border-color: var(--border); color: var(--ink); }
+
+  /* ---------- Sections ---------- */
+  section { margin-top: 56px; scroll-margin-top: 20px; }
+  .section-head { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; margin-bottom: 18px; flex-wrap: wrap; }
+  .section-head h2 { font-size: 21px; font-weight: 800; letter-spacing: -0.01em; }
+  .section-note { font-size: 13px; color: var(--ink-muted); max-width: 46ch; }
+
+  /* ---------- KPI row ---------- */
+  .kpi-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 12px; }
+  @media (max-width: 980px) { .kpi-grid { grid-template-columns: repeat(3, 1fr); } }
+  @media (max-width: 620px) { .kpi-grid { grid-template-columns: repeat(2, 1fr); } }
+  .kpi {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 14px;
+    padding: 16px 16px 14px; box-shadow: var(--shadow); display: flex; flex-direction: column; gap: 6px;
+  }
+  .kpi-label { font-size: 11.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: var(--ink-muted); }
+  .kpi-value { font-size: 22px; font-weight: 800; letter-spacing: -0.01em; }
+  .kpi-value small { font-size: 12px; font-weight: 600; color: var(--ink-muted); }
+  .kpi-delta { font-size: 12.5px; font-weight: 700; display: inline-flex; align-items: center; gap: 4px; }
+  .kpi-delta.down { color: var(--critical); }
+  .kpi-delta.up { color: var(--good); }
+  .kpi-delta.flat { color: var(--ink-muted); }
+  .kpi-sub { font-size: 11.5px; color: var(--ink-muted); margin-top: auto; }
+
+  /* ---------- Cards / charts ---------- */
+  .grid-2 { display: grid; grid-template-columns: 1.4fr 1fr; gap: 16px; align-items: stretch; }
+  @media (max-width: 900px) { .grid-2 { grid-template-columns: 1fr; } }
+
+  .card {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 16px;
+    padding: 20px 20px 16px; box-shadow: var(--shadow);
+  }
+  .card h3 { font-size: 15px; font-weight: 700; }
+  .card .card-sub { font-size: 12.5px; color: var(--ink-muted); margin-top: 3px; }
+  .card-foot { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-top: 10px; flex-wrap: wrap; }
+  .src { font-size: 11px; color: var(--ink-muted); }
+  .src a { color: var(--ink-muted); text-decoration: underline dotted; }
+
+  .chart-scroll { overflow-x: auto; margin: 6px -4px 0; padding: 0 4px; }
+  svg.chart { display: block; width: 100%; height: auto; min-width: 460px; }
+  svg.chart text { fill: var(--ink-2); }
+  .axis-label { font-size: 10.5px; fill: var(--ink-muted); }
+  .grid-line { stroke: var(--grid); stroke-width: 1; }
+  .baseline { stroke: var(--border-strong); stroke-width: 1; }
+  .bar-label { font-size: 11.5px; font-weight: 700; fill: var(--ink); }
+  .bar-name { font-size: 12px; font-weight: 600; fill: var(--ink-2); }
+  .value-tag { font-size: 11px; fill: var(--ink-muted); }
+
+  /* legend */
+  .legend { display: flex; gap: 14px; flex-wrap: wrap; margin-top: 4px; }
+  .legend-item { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; color: var(--ink-2); font-weight: 600; }
+  .legend-dot { width: 9px; height: 9px; border-radius: 3px; display: inline-block; }
+
+  /* tooltip */
+  .tooltip {
+    position: fixed; pointer-events: none; z-index: 40; opacity: 0; transition: opacity .1s ease;
+    background: var(--ink); color: var(--page); font-size: 12.5px; line-height: 1.4;
+    padding: 8px 10px; border-radius: 8px; max-width: 240px; box-shadow: 0 8px 20px rgba(0,0,0,.25);
+  }
+  .tooltip b { display: block; font-size: 12.5px; margin-bottom: 2px; }
+  .tooltip .num { font-weight: 700; }
+
+  /* details/table */
+  details.data-table { margin-top: 12px; border-top: 1px dashed var(--border-strong); padding-top: 10px; }
+  details.data-table summary {
+    cursor: pointer; font-size: 12.5px; font-weight: 700; color: var(--accent-ink); list-style: none;
+    display: inline-flex; align-items: center; gap: 6px;
+  }
+  details.data-table summary::-webkit-details-marker { display: none; }
+  details.data-table summary::before { content: "▸"; font-size: 10px; transition: transform .15s; }
+  details.data-table[open] summary::before { transform: rotate(90deg); }
+  table.raw { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 12.5px; }
+  table.raw th, table.raw td { text-align: right; padding: 5px 8px; border-bottom: 1px solid var(--grid); }
+  table.raw th:first-child, table.raw td:first-child { text-align: left; }
+  table.raw th { font-weight: 700; color: var(--ink-muted); font-size: 11px; text-transform: uppercase; letter-spacing: .04em; }
+
+  /* callout */
+  .callout {
+    border: 1px solid var(--border-strong); border-left: 3px solid var(--accent-line);
+    background: var(--accent-soft); border-radius: 10px; padding: 14px 16px; font-size: 13.5px; color: var(--ink-2);
+  }
+  .callout b { color: var(--ink); }
+
+  /* timeline */
+  .timeline { display: flex; flex-direction: column; }
+  .tl-item { display: grid; grid-template-columns: 108px 22px 1fr; gap: 4px 14px; padding: 14px 0; position: relative; }
+  .tl-item:not(:last-child)::after {
+    content: ""; position: absolute; left: 118px; top: 34px; bottom: -8px; width: 1px; background: var(--border-strong);
+  }
+  .tl-date { font-weight: 800; font-size: 13px; padding-top: 2px; text-align: right; color: var(--ink-2); }
+  .tl-dot { width: 12px; height: 12px; border-radius: 50%; background: var(--surface); border: 2px solid var(--accent-line); margin-top: 3px; z-index: 1; }
+  .tl-dot.peak { background: var(--critical); border-color: var(--critical); }
+  .tl-dot.good { background: var(--good); border-color: var(--good); }
+  .tl-body h4 { margin: 0 0 3px; font-size: 14.5px; font-weight: 700; }
+  .tl-body p { margin: 0; font-size: 13px; color: var(--ink-2); max-width: 62ch; }
+  @media (max-width: 620px) {
+    .tl-item { grid-template-columns: 60px 18px 1fr; }
+    .tl-item::after { left: 68px; }
+    .tl-date { font-size: 11.5px; }
+  }
+
+  /* operator tag */
+  .op-tag { font-size: 10.5px; font-weight: 600; color: var(--ink-muted); }
+
+  /* export value list */
+  .value-list { display: flex; flex-direction: column; gap: 10px; }
+  .value-row { display: flex; justify-content: space-between; font-size: 13.5px; }
+
+  /* footer / sources */
+  footer.sources {
+    margin-top: 64px; border-top: 1px solid var(--border); padding-top: 24px;
+  }
+  .src-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px 32px; margin-top: 14px; }
+  @media (max-width: 720px) { .src-grid { grid-template-columns: 1fr; } }
+  .src-grid li { font-size: 13px; color: var(--ink-2); margin-bottom: 6px; }
+  .disclaimer { margin-top: 22px; font-size: 12px; color: var(--ink-muted); max-width: 78ch; }
+</style>
+</head>
+<body>
+
+<div id="load-error">
+  <div class="box">
+    <b>Não foi possível carregar <code>data/petroleo.json</code>.</b>
+    Se abriste este ficheiro diretamente a fazer duplo-clique (<code>file://…</code>), o browser bloqueia o carregamento de dados locais por segurança.
+    Corre um servidor local nesta pasta, por exemplo <code>python3 -m http.server 8000</code>, e abre <code>http://localhost:8000</code>.
+  </div>
+</div>
+
+<header class="top">
+  <div class="top-inner">
+    <div class="eyebrow">Painel independente · dados públicos</div>
+    <h1>Petróleo em Angola</h1>
+    <p class="subtitle">Produção, exportação e peso económico do setor petrolífero angolano — compilado a partir de boletins oficiais da ANPG, EIA, FMI, Banco Africano de Desenvolvimento e dados de comércio internacional. Feito para estudantes e jornalistas explorarem a matéria-prima com números, não com narrativa.</p>
+    <div class="badges">
+      <span class="badge">Produção mensal: dados oficiais ANPG até dez/2025</span>
+      <span class="badge">Angola saiu da OPEP em dez/2023</span>
+      <span class="badge">Atualizado em 6 ago 2026</span>
+    </div>
+    <nav class="jump">
+      <a href="#producao">Produção</a>
+      <a href="#exportacoes">Exportações</a>
+      <a href="#economia">Peso económico</a>
+      <a href="#operadoras">Operadoras</a>
+      <a href="#refino">Refino</a>
+      <a href="#linha-do-tempo">Linha do tempo</a>
+      <a href="#fontes">Fontes</a>
+    </nav>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <!-- ================= KPI ROW ================= -->
+  <section id="visao-geral">
+    <div class="kpi-grid">
+      <div class="kpi">
+        <div class="kpi-label">Produção diária · último mês</div>
+        <div class="kpi-value num" id="kpi-daily">—</div>
+        <span class="kpi-delta" id="kpi-daily-delta">—</span>
+        <div class="kpi-sub">Fonte: ANPG, resumo mensal</div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-label">Produção acumulada 2025</div>
+        <div class="kpi-value num" id="kpi-accum">—</div>
+        <span class="kpi-delta flat" id="kpi-accum-sub">—</span>
+        <div class="kpi-sub">Soma dos 12 boletins mensais ANPG</div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-label">Receita de exportação 2025</div>
+        <div class="kpi-value num">US$ 24,4 <small>mil M</small></div>
+        <span class="kpi-delta down">▼ 22% <span style="font-weight:500;color:var(--ink-muted)">vs. 2024</span></span>
+        <div class="kpi-sub">Fonte: Economy.com / AfDB</div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-label">Peso nas exportações totais</div>
+        <div class="kpi-value num">~90–95<small>%</small></div>
+        <span class="kpi-delta flat">FMI: 94% · BAD: 95%</span>
+        <div class="kpi-sub">Quase todo o comércio externo</div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-label">Reservas provadas</div>
+        <div class="kpi-value num">2,6 <small>mil M bbl</small></div>
+        <span class="kpi-delta flat">início de 2025</span>
+        <div class="kpi-sub">Fonte: EIA</div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-label">Posição em África</div>
+        <div class="kpi-value num">2.º <small>maior produtor</small></div>
+        <span class="kpi-delta flat">África Subsaariana</span>
+        <div class="kpi-sub">Atrás da Nigéria · fonte: EIA</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= PRODUÇÃO ================= -->
+  <section id="producao">
+    <div class="section-head">
+      <h2>Produção de petróleo</h2>
+      <div class="section-note">Do pico histórico de 2008 ao declínio pós-OPEP — e à tentativa de recuperação em 2025.</div>
+    </div>
+
+    <div class="card">
+      <h3>Produção diária média, mês a mês — 2025</h3>
+      <p class="card-sub">Barris de petróleo por dia (bopd), reportado nos "Resumos Mensais sobre a Produção Petrolífera" da ANPG. A produção caiu abaixo de 1 milhão de bopd em julho — o limiar simbólico — antes de recuperar com novos volumes do CLOV Fase 3 e do campo Begonia.</p>
+      <div class="chart-scroll"><svg class="chart" id="chart-monthly" role="img" aria-label="Gráfico de linha da produção diária média de petróleo em Angola em 2025, por mês, variando entre 998.757 e 1.066.369 barris por dia"></svg></div>
+      <div class="card-foot">
+        <span class="src">Fonte: <a href="https://anpg.co.ao/producao/" target="_blank" rel="noopener">ANPG — Resumos mensais de produção</a></span>
+      </div>
+      <details class="data-table">
+        <summary>Ver os 12 valores mensais em tabela</summary>
+        <table class="raw" id="table-monthly">
+          <thead><tr><th>Mês</th><th>Produção total (barris)</th><th>Média diária (bopd)</th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </details>
+    </div>
+
+    <div style="height:16px"></div>
+
+    <div class="grid-2">
+      <div class="card">
+        <h3>Trajetória de longo prazo</h3>
+        <p class="card-sub">Anos selecionados com dados confirmados — não uma série anual contínua. O pico de 2008 (~1,9 milhões bopd) nunca mais foi repetido; a produção caiu quase pela metade em 15 anos.</p>
+        <div class="chart-scroll"><svg class="chart" id="chart-historical" role="img" aria-label="Gráfico de barras da produção anual média em Angola em anos selecionados entre 2005 e 2025"></svg></div>
+        <div class="card-foot">
+          <span class="src">Fontes: <a href="https://www.eia.gov/international/content/analysis/countries_long/Angola/index.htm" target="_blank" rel="noopener">EIA</a>, ANPG, <a href="https://en.wikipedia.org/wiki/Petroleum_industry_in_Angola" target="_blank" rel="noopener">Wikipedia</a></span>
+        </div>
+        <details class="data-table">
+          <summary>Notas sobre os valores</summary>
+          <table class="raw" id="table-historical">
+            <thead><tr><th>Ano</th><th>Produção (bopd)</th><th>Nota</th></tr></thead>
+            <tbody></tbody>
+          </table>
+        </details>
+      </div>
+
+      <div class="card">
+        <h3>Produção por bloco — dez 2025</h3>
+        <p class="card-sub">Os 5 principais blocos offshore reportados pela ANPG, mais um valor residual (todos os restantes blocos).</p>
+        <div class="chart-scroll"><svg class="chart" id="chart-blocks" role="img" aria-label="Gráfico de barras da produção por bloco em dezembro de 2025"></svg></div>
+        <div class="card-foot">
+          <span class="src">Fonte: ANPG, resumo mensal dez/2025 · "Outros" = diferença</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= EXPORTAÇÕES ================= -->
+  <section id="exportacoes">
+    <div class="section-head">
+      <h2>Exportações</h2>
+      <div class="section-note">Para onde vai o petróleo angolano — e quanto vale.</div>
+    </div>
+    <div class="grid-2">
+      <div class="card">
+        <h3>Exportações de crude por destino — 2023, em volume</h3>
+        <p class="card-sub">A China recebe sozinha mais de metade do petróleo exportado por Angola. É o maior comprador de crude angolano há quase duas décadas.</p>
+        <div class="chart-scroll"><svg class="chart" id="chart-exports" role="img" aria-label="Gráfico de barras das exportações de crude por destino em 2023"></svg></div>
+        <div class="card-foot">
+          <span class="src">Fonte: <a href="https://www.eia.gov/international/content/analysis/countries_long/Angola/index.htm" target="_blank" rel="noopener">EIA</a>, referente a 2023</span>
+        </div>
+      </div>
+      <div class="card" style="display:flex; flex-direction:column; justify-content:center;">
+        <h3>Em valor, 2024 (USD)</h3>
+        <p class="card-sub" style="margin-bottom:14px;">A classificação por valor (em vez de volume) usa dados de comércio internacional mais recentes e mostra ligeiras diferenças — a Indonésia e os EUA entram no top 5, refletindo preços e mix de produtos, não apenas volume.</p>
+        <div class="value-list" id="exports-value-list"></div>
+        <div class="card-foot"><span class="src">Fonte: OEC / UN Comtrade, 2024</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= ECONOMIA ================= -->
+  <section id="economia">
+    <div class="section-head">
+      <h2>Peso na economia</h2>
+      <div class="section-note">Fontes diferentes, números diferentes — a metodologia importa.</div>
+    </div>
+    <div class="card">
+      <h3>Dependência do petróleo, por fonte</h3>
+      <p class="card-sub">FMI, Banco Africano de Desenvolvimento (BAD) e o próprio Governo angolano publicam estimativas distintas para o peso do petróleo na economia — sobretudo no PIB, onde a diferença é de quase o dobro. Isto não é um erro: reflete escolhas metodológicas diferentes (preços de mercado vs. custo de fatores, ano de referência, o que conta como "setor petrolífero").</p>
+      <div class="chart-scroll"><svg class="chart" id="chart-economy" role="img" aria-label="Gráfico de barras agrupadas comparando estimativas do FMI, Banco Africano de Desenvolvimento e Governo de Angola sobre o peso do petróleo nas exportações, receita fiscal e PIB"></svg></div>
+      <div class="legend" id="legend-economy"></div>
+      <div class="card-foot">
+        <span class="src">Fontes: FMI (Article IV 2024), BAD (Angola Fact Sheet 2025), Governo de Angola (OGE 2025)</span>
+      </div>
+    </div>
+    <div style="height:14px"></div>
+    <div class="callout">
+      <b>Porque é que o PIB varia tanto (13,9% a 28,9%)?</b> As exportações (~90–95%) e a receita fiscal (~57–60%) têm estimativas próximas entre fontes porque medem fluxos de caixa concretos. O PIB é mais sensível a metodologia — o Governo tende a reportar uma economia mais diversificada, enquanto o FMI e o BAD aplicam critérios padronizados que atribuem mais peso ao setor petrolífero. Para um leitor crítico: peça sempre a metodologia antes de citar um número de "peso no PIB".
+    </div>
+  </section>
+
+  <!-- ================= OPERADORAS ================= -->
+  <section id="operadoras">
+    <div class="section-head">
+      <h2>Quem produz</h2>
+      <div class="section-note">Cinco grupos internacionais concentram a esmagadora maioria da produção offshore.</div>
+    </div>
+    <div class="card">
+      <h3>Quota de mercado estimada por operadora</h3>
+      <p class="card-sub">A Azule Energy resulta da fusão dos ativos angolanos da BP e da Eni em 2022. A Sonangol P&amp;P (braço de produção da petrolífera estatal) e operadores independentes dividem o que resta.</p>
+      <div class="chart-scroll"><svg class="chart" id="chart-operators" role="img" aria-label="Gráfico de barras da quota de mercado por operadora"></svg></div>
+      <div class="card-foot">
+        <span class="src">Estimativa de mercado: Mordor Intelligence · não são dados oficiais da ANPG</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= REFINO ================= -->
+  <section id="refino">
+    <div class="section-head">
+      <h2>O paradoxo do refino</h2>
+      <div class="section-note">Angola produz mais de 1 milhão de barris de crude por dia — mas não os transforma em combustível em casa.</div>
+    </div>
+    <div class="card">
+      <h3>Produção vs. capacidade de refino</h3>
+      <p class="card-sub">Angola exporta quase todo o crude que extrai e importa a maior parte dos combustíveis refinados que consome. A refinaria de Luanda é, hoje, a única operacional; os projetos de Cabinda, Lobito (SonaRef) e Soyo continuam em desenvolvimento.</p>
+      <div class="chart-scroll"><svg class="chart" id="chart-refining" role="img" aria-label="Gráfico de barras comparando a produção de crude com a capacidade de refino operacional e planeada"></svg></div>
+      <div class="legend">
+        <span class="legend-item"><span class="legend-dot" style="background:var(--s-blue)"></span>Realidade atual</span>
+        <span class="legend-item"><span class="legend-dot" style="background:var(--other); opacity:.7"></span>Planeado (em desenvolvimento)</span>
+      </div>
+      <div class="card-foot">
+        <span class="src">Fonte: EIA — capacidade de refino, Angola (2024/2025)</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= LINHA DO TEMPO ================= -->
+  <section id="linha-do-tempo">
+    <div class="section-head">
+      <h2>Linha do tempo</h2>
+      <div class="section-note">Os marcos que explicam o gráfico de produção.</div>
+    </div>
+    <div class="card">
+      <div class="timeline" id="timeline"></div>
+    </div>
+  </section>
+
+  <!-- ================= FONTES ================= -->
+  <footer class="sources" id="fontes">
+    <h2 style="font-size:18px; font-weight:800;">Fontes e metodologia</h2>
+    <ul class="src-grid">
+      <li><b>ANPG</b> — Agência Nacional de Petróleo, Gás e Biocombustíveis: <a href="https://anpg.co.ao/producao/" target="_blank" rel="noopener">boletins mensais de produção 2025</a> (fonte primária para produção mensal e por bloco)</li>
+      <li><b>EIA</b> — U.S. Energy Information Administration: <a href="https://www.eia.gov/international/content/analysis/countries_long/Angola/index.htm" target="_blank" rel="noopener">Angola Country Analysis Brief</a> (histórico de produção, exportações, refino, reservas)</li>
+      <li><b>FMI</b> — Article IV Consultation Angola 2024/2025 (peso fiscal e do PIB)</li>
+      <li><b>Banco Africano de Desenvolvimento</b> — Angola Fact Sheet 2025</li>
+      <li><b>OEC / UN Comtrade</b> — exportações por destino em valor, 2024</li>
+      <li><b>Mordor Intelligence</b> — estimativas de quota de mercado por operadora</li>
+      <li><b>Wikipedia — Petroleum industry in Angola</b> — contexto histórico e cruzamento de fontes</li>
+      <li><b>Cobertura de imprensa</b> — Xinhua, OilPrice.com, S&amp;P Global, JPT/SPE, Economy.com (Moody's Analytics) — contexto sobre a saída da OPEP e receita de exportação</li>
+    </ul>
+    <p class="disclaimer">Este é um painel educativo independente, sem afiliação com a ANPG, a Sonangol, a OPEP ou qualquer operadora citada. Os números de produção mensal de 2025 vêm diretamente dos boletins oficiais da ANPG; os restantes indicadores combinam múltiplas fontes públicas, por vezes com estimativas divergentes — assinaladas como tal ao longo do painel. Sempre que possível, verifique os valores junto da fonte primária antes de os citar. Construído com <a href="https://claude.ai" target="_blank" rel="noopener">Claude</a>.</p>
+  </footer>
+
+</div>
+
+<div class="tooltip" id="tooltip"></div>
+
+<script src="app.js"></script>
+</body>
+</html>
