@@ -51,5 +51,3 @@ Onde as fontes divergem — nomeadamente o peso do petróleo no PIB, que varia e
 ## Aviso
 
 Este é um projeto educativo independente. Não tem qualquer afiliação com a ANPG, a Sonangol, a OPEP ou qualquer operadora citada. Os dados de produção mensal de 2025 vêm diretamente das fontes oficiais da ANPG; os restantes indicadores combinam fontes públicas que por vezes divergem entre si — isso está sinalizado no próprio painel. Confirma sempre junto da fonte primária antes de citar um número.
-
-Construído com [Claude](https://claude.ai).
