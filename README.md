@@ -1,4 +1,5 @@
 # 🛢️ Petróleo em Angola — Painel de Dados Públicos
+# https://open-data-crude.vercel.app/
 
 Painel educativo, estático e sem dependências, com dados públicos sobre produção, exportação e peso económico do setor petrolífero angolano. Feito para estudantes e jornalistas explorarem os números diretamente — com as fontes sempre visíveis ao lado de cada gráfico.
 
